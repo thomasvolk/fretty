@@ -24,10 +24,19 @@ class Fretboard:
         return f"Fretboard({self.strings})"
 
 
+class SvgGenerator:
+    def __init__(self, width = 600, height = 400):
+        self.width = width
+        self.height = height
+
+    def generate(self, fretboard):
+        return "<>"
+
+
 def generate_svg(lines):
     fb = Fretboard(lines)
-    print(fb)
-    return "<>"
+    svg = SvgGenerator()
+    return svg.generate(fb)
 
 
 if __name__ == '__main__':
