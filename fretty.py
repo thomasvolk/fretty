@@ -40,6 +40,7 @@ class Fretboard:
 class ViewConfig:
     string_distance: int = 40
     fret_distance: int = 60
+    margin: int = 8
 
 
 class SvgGenerator:
@@ -57,14 +58,14 @@ class SvgGenerator:
 
     def generate(self, fretboard):
         cfg = self.view_config
-        width = fretboard.fret_count * cfg.fret_distance
-        height = fretboard.string_count * cfg.string_distance
+        width = fretboard.fret_count * cfg.fret_distance + (2 * cfg.margin)
+        height = fretboard.string_count * cfg.string_distance + (2 * cfg.margin)
         string_lines = '\n'.join([ self.string_line_template.format(
-                            y=i*cfg.string_distance,
-                            start_x=0,
-                            end_x=width
+                            y=i*cfg.string_distance + cfg.margin,
+                            start_x=cfg.margin,
+                            end_x=width - cfg.margin
                          ) 
-                         for i in range(0, fretboard.string_count) ])
+                         for i in range(0, fretboard.string_count + 1) ])
         return self.main_template.format(width=width, height=height, string_lines=string_lines)
 
 
