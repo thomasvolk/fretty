@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
+from dataclasses import dataclass
+
 
 class FBString:
     def __init__(self, line):
         self.notes = dict()
+        self.bars = 0
         for position, c in enumerate(line.strip()):
+            self.bars += 1
             if c != '-':
                 self.notes[position]= c
     
@@ -20,8 +24,22 @@ class Fretboard:
         self.position = lines[0]
         self.strings = [ FBString(line) for line in lines[1:] ]
 
+    @property
+    def string_count(self):
+        return len(self.strings)
+
+    @property
+    def fret_count(self):
+        return max([ s.bars for s in self.strings ])
+
     def __repr__(self):
         return f"Fretboard({self.strings})"
+
+
+@dataclass
+class ViewConfig:
+    string_distance: int = 40
+    fret_distance: int = 60
 
 
 class SvgGenerator:
@@ -32,17 +50,20 @@ class SvgGenerator:
      preserveAspectRatio="xMidYMid meet"
      viewBox="0 0 {width} {height}">
 </svg>"""
-    def __init__(self, width = 600, height = 400):
-        self.width = width
-        self.height = height
+    def __init__(self, view_config):
+        self.view_config = view_config
 
     def generate(self, fretboard):
-        return self.template.format(width=self.width, height=self.height)
+        cfg = self.view_config
+        width = fretboard.fret_count * cfg.fret_distance
+        height = fretboard.string_count * cfg.string_distance
+        return self.template.format(width=width, height=height)
 
 
 def generate_svg(lines):
     fb = Fretboard(lines)
-    svg = SvgGenerator()
+    cfg = ViewConfig()
+    svg = SvgGenerator(cfg)
     return svg.generate(fb)
 
 
