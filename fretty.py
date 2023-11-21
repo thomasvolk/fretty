@@ -25,12 +25,19 @@ class Fretboard:
 
 
 class SvgGenerator:
+    template = """<svg version="1.1"
+     xmlns="http://www.w3.org/2000/svg"  
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:svgjs="http://svgjs.com/svgjs" 
+     preserveAspectRatio="xMidYMid meet"
+     viewBox="0 0 {width} {height}">
+</svg>"""
     def __init__(self, width = 600, height = 400):
         self.width = width
         self.height = height
 
     def generate(self, fretboard):
-        return "<>"
+        return self.template.format(width=self.width, height=self.height)
 
 
 def generate_svg(lines):
