@@ -43,13 +43,15 @@ class ViewConfig:
 
 
 class SvgGenerator:
-    template = """<svg version="1.1"
+    main_template = """<svg version="1.1"
      xmlns="http://www.w3.org/2000/svg"  
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns:svgjs="http://svgjs.com/svgjs" 
      preserveAspectRatio="xMidYMid meet"
      viewBox="0 0 {width} {height}">
+{string_lines}
 </svg>"""
+    string_line_template = '<line x1="{start_x}" y1="{y}"  x2="{end_x}" y2="{y}"  stroke-width="2" stroke="#000000"></line>'
     def __init__(self, view_config):
         self.view_config = view_config
 
@@ -57,7 +59,13 @@ class SvgGenerator:
         cfg = self.view_config
         width = fretboard.fret_count * cfg.fret_distance
         height = fretboard.string_count * cfg.string_distance
-        return self.template.format(width=width, height=height)
+        string_lines = '\n'.join([ self.string_line_template.format(
+                            y=i*cfg.string_distance,
+                            start_x=0,
+                            end_x=width
+                         ) 
+                         for i in range(0, fretboard.string_count) ])
+        return self.main_template.format(width=width, height=height, string_lines=string_lines)
 
 
 def generate_svg(lines):
