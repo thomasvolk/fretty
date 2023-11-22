@@ -60,9 +60,10 @@ class SvgGenerator:
 {strings}
 {notes}
 </svg>"""
-    line_template = '<line x1="{start_x}" y1="{start_y}"  x2="{end_x}" y2="{end_y}"  stroke-width="2" stroke="#000000"></line>'
-    note_template = '<circle r="{radius}" cx="{x}" cy="{y}" fill="#000000" stroke-width="0" stroke="#000000"></circle>'
-    start_position_template = '<text x="{x}" y="{y}" font-family="Arial" font-size="{size}" text-anchor="middle" dominant-baseline="central" fill="#000000">{position}</text>'
+    line_template = '<line x1="{start_x}" y1="{start_y}"  x2="{end_x}" y2="{end_y}"  stroke-width="2" stroke="#000000"/>'
+    circle_template = '<circle r="{radius}" cx="{x}" cy="{y}" fill="#000000" stroke-width="0" stroke="#000000"/>'
+    rect_template = '<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="#000000" stroke-width="0" stroke="#000000"/>'
+    text_template = '<text x="{x}" y="{y}" font-family="Arial" font-size="{size}" text-anchor="middle" dominant-baseline="central" fill="#000000">{text}</text>'
 
     def __init__(self, view_config):
         self.view_config = view_config
@@ -90,19 +91,29 @@ class SvgGenerator:
             ) 
             for i in range(0, fretboard.fret_count + 1) 
         ])
+        def make_note_entry(position, n):
+            if n.value == 'R':
+                return self.rect_template.format(
+                    width=cfg.note_radius*2,
+                    height=cfg.note_radius*2,
+                    x=n.position * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2) - cfg.note_radius,
+                    y=position * cfg.string_distance + y_offest - cfg.note_radius
+                )
+            else:
+                return self.circle_template.format(
+                    radius=cfg.note_radius,
+                    x=n.position * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2),
+                    y=position * cfg.string_distance + y_offest
+                )
         notes = '\n'.join([
-            self.note_template.format(
-                radius=cfg.note_radius,
-                x=n.position * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2),
-                y=s.position * cfg.string_distance + y_offest
-            )
+            make_note_entry(s.position, n)
             for s in fretboard.strings for n in s.notes
         ])
-        start_position = self.start_position_template.format(
+        start_position = self.text_template.format(
             x=cfg.margin + (cfg.start_position_space/2),
             y=cfg.margin + (cfg.start_position_space/2),
             size=cfg.start_position_space,
-            position=fretboard.start_position
+            text=fretboard.start_position
         )
 
         return self.main_template.format(
