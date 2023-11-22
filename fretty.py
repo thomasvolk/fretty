@@ -6,9 +6,9 @@ from dataclasses import dataclass
 class FBString:
     def __init__(self, line):
         self.notes = dict()
-        self.bars = 0
+        self.frets = 0
         for position, c in enumerate(line.strip()):
-            self.bars += 1
+            self.frets += 1
             if c != '-':
                 self.notes[position]= c
     
@@ -30,7 +30,7 @@ class Fretboard:
 
     @property
     def fret_count(self):
-        return max([ s.bars for s in self.strings ])
+        return max([ s.frets for s in self.strings ])
 
     def __repr__(self):
         return f"Fretboard({self.strings})"
@@ -40,7 +40,7 @@ class Fretboard:
 class ViewConfig:
     string_distance: int = 40
     fret_distance: int = 60
-    margin: int = 8
+    margin: int = 20
 
 
 class SvgGenerator:
