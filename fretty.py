@@ -51,8 +51,10 @@ class SvgGenerator:
      preserveAspectRatio="xMidYMid meet"
      viewBox="0 0 {width} {height}">
 {string_lines}
+{fret_lines}
 </svg>"""
-    string_line_template = '<line x1="{start_x}" y1="{y}"  x2="{end_x}" y2="{y}"  stroke-width="2" stroke="#000000"></line>'
+    line_template = '<line x1="{start_x}" y1="{start_y}"  x2="{end_x}" y2="{end_y}"  stroke-width="2" stroke="#000000"></line>'
+    
     def __init__(self, view_config):
         self.view_config = view_config
 
@@ -60,13 +62,26 @@ class SvgGenerator:
         cfg = self.view_config
         width = fretboard.fret_count * cfg.fret_distance + (2 * cfg.margin)
         height = fretboard.string_count * cfg.string_distance + (2 * cfg.margin)
-        string_lines = '\n'.join([ self.string_line_template.format(
-                            y=i*cfg.string_distance + cfg.margin,
+        string_lines = '\n'.join([ self.line_template.format(
+                            start_y=i*cfg.string_distance + cfg.margin,
+                            end_y=i*cfg.string_distance + cfg.margin,
                             start_x=cfg.margin,
                             end_x=width - cfg.margin
                          ) 
                          for i in range(0, fretboard.string_count + 1) ])
-        return self.main_template.format(width=width, height=height, string_lines=string_lines)
+        fret_lines = '\n'.join([ self.line_template.format(
+                            start_y=cfg.margin,
+                            end_y=height - cfg.margin,
+                            start_x=i*cfg.fret_distance + cfg.margin,
+                            end_x=i*cfg.fret_distance + cfg.margin
+                         ) 
+                         for i in range(0, fretboard.fret_count + 1) ])
+        return self.main_template.format(
+                    width=width, 
+                    height=height, 
+                    string_lines=string_lines,
+                    fret_lines=fret_lines
+                )
 
 
 def generate_svg(lines):
