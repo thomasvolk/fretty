@@ -2,18 +2,19 @@
 
 fretty is a guitar fretboard generator.
 
-    XII
-    -o--
-    --o-
-    --R-
-    ----
-    ----
+    III
+    --o-oo
+    --o-o#
+    -oo-o-
+    -o#-o-
+    o-o-o-
+    #-o-o-
 
 The first line is the position of the starting fret.
 Every line which follows is the representation on string.
 
 * 'o' is one node
-* 'R' is the root note
+* '#' is the root note
 * '-' is an empty place
 
 how to run:

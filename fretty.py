@@ -25,7 +25,7 @@ class FBString:
 class Fretboard:
     def __init__(self, lines):
         self.start_position = lines[0].strip()
-        self.strings = [ FBString(pos, line) for pos, line in enumerate(lines[1:]) ]
+        self.strings = [ FBString(pos, line) for pos, line in enumerate(lines[1:]) if len(line) > 0]
 
     @property
     def string_count(self):
@@ -43,7 +43,7 @@ class Fretboard:
 class ViewConfig:
     string_distance: int = 40
     fret_distance: int = 60
-    margin: int = 10
+    margin: int = 20
     note_radius: int = 15
     start_position_space: int = 40
 
@@ -63,7 +63,7 @@ class SvgGenerator:
     line_template = '<line x1="{start_x}" y1="{start_y}"  x2="{end_x}" y2="{end_y}"  stroke-width="2" stroke="#000000"/>'
     circle_template = '<circle r="{radius}" cx="{x}" cy="{y}" fill="#000000" stroke-width="0" stroke="#000000"/>'
     rect_template = '<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="#000000" stroke-width="0" stroke="#000000"/>'
-    text_template = '<text x="{x}" y="{y}" font-family="Arial" font-size="{size}" text-anchor="middle" dominant-baseline="central" fill="#000000">{text}</text>'
+    text_template = '<text x="{x}" y="{y}" font-family="Arial" font-size="{size}" text-anchor="{anchor}" dominant-baseline="{baseline}" fill="{color}">{text}</text>'
 
     def __init__(self, view_config):
         self.view_config = view_config
@@ -92,26 +92,42 @@ class SvgGenerator:
             for i in range(0, fretboard.fret_count + 1) 
         ])
         def make_note_entry(position, n):
-            if n.value == 'R':
+            x = n.position * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2)
+            y = position * cfg.string_distance + y_offest
+            if n.value == '#':
                 return self.rect_template.format(
                     width=cfg.note_radius*2,
                     height=cfg.note_radius*2,
-                    x=n.position * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2) - cfg.note_radius,
-                    y=position * cfg.string_distance + y_offest - cfg.note_radius
+                    x=x - cfg.note_radius,
+                    y=y - cfg.note_radius
                 )
             else:
-                return self.circle_template.format(
+                result = self.circle_template.format(
                     radius=cfg.note_radius,
-                    x=n.position * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2),
-                    y=position * cfg.string_distance + y_offest
+                    x=x,
+                    y=y
                 )
+                if n.value != 'o':
+                    result += '\n' + self.text_template.format(
+                        x=x,
+                        y=y,
+                        anchor='middle',
+                        baseline='middle',
+                        color='#FFFFFF',
+                        size=cfg.note_radius,
+                        text=n.value
+                    )
+                return result
         notes = '\n'.join([
             make_note_entry(s.position, n)
             for s in fretboard.strings for n in s.notes
         ])
         start_position = self.text_template.format(
-            x=cfg.margin + (cfg.start_position_space/2),
+            x=cfg.margin,
             y=cfg.margin + (cfg.start_position_space/2),
+            anchor='start',
+            baseline='auto',
+            color='#000000',
             size=cfg.start_position_space,
             text=fretboard.start_position
         )
@@ -143,7 +159,7 @@ if __name__ == '__main__':
     parser.add_argument('input_file')
     parser.add_argument('-o', '--output-file')
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.0')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.1')
     args = parser.parse_args()
 
     with open(args.input_file) as f:
