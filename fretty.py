@@ -138,10 +138,12 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
                 prog='fretty',
-                description='Fretty is a guitar fretboard generator')
+                description='Fretty is a guitar fretboard generator'
+                )
     parser.add_argument('input_file')
     parser.add_argument('-o', '--output-file')
     parser.add_argument('-v', '--verbose', action='store_true')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.0')
     args = parser.parse_args()
 
     with open(args.input_file) as f:
