@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from dataclasses import dataclass
+import sys
+from xml.dom.minidom import parseString
 
 @dataclass
 class Note:
@@ -49,11 +51,12 @@ class ViewConfig:
 
 
 class SvgGenerator:
-    main_template = """<svg version="1.1"
+    stand_alone_attributes = """version="1.1"
      xmlns="http://www.w3.org/2000/svg"  
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns:svgjs="http://svgjs.com/svgjs" 
-     preserveAspectRatio="xMidYMid meet"
+     preserveAspectRatio="xMidYMid meet" """
+    main_template = """<svg {attributes} {size_attribues}
      viewBox="0 0 {width} {height}">
 {start_position}
 {frets}
@@ -68,7 +71,16 @@ class SvgGenerator:
     def __init__(self, view_config):
         self.view_config = view_config
 
-    def generate(self, fretboard):
+    def generate(self, fretboard, width=None, height=None, embedded=False):
+        attributes = ""
+        if not embedded:
+            attributes = self.stand_alone_attributes
+        size_attribues = ""
+        if width:
+            size_attribues += f' width="{width}" '
+        if height:
+            size_attribues += f' height="{height}"'
+
         cfg = self.view_config
         width = fretboard.fret_count * cfg.fret_distance + (2 * cfg.margin)
         height = fretboard.string_count * cfg.string_distance + (2 * cfg.margin)
@@ -133,6 +145,8 @@ class SvgGenerator:
         )
 
         return self.main_template.format(
+                    attributes=attributes,
+                    size_attribues=size_attribues,
                     width=width, 
                     height=height, 
                     start_position=start_position,
@@ -142,12 +156,20 @@ class SvgGenerator:
                 )
 
 
-def generate_svg(lines):
+def generate_svg(lines, width=None, height=None, embedded=False):
     fb = Fretboard(lines)
     cfg = ViewConfig()
     svg = SvgGenerator(cfg)
-    return svg.generate(fb)
+    return svg.generate(fb, width=width, height=height, embedded=embedded)
 
+def process_html(html):
+    dom = parseString(html)
+    for node in dom.getElementsByTagName("fretty"):
+        lines = node.firstChild.data.strip().split("\n")
+        svg = generate_svg(lines, width=node.getAttribute('width'), height=node.getAttribute('height'), embedded=True)
+        svgNode = parseString(svg).documentElement
+        node.parentNode.replaceChild(svgNode, node) 
+    return dom.toxml()
 
 if __name__ == '__main__':
     import argparse
@@ -158,16 +180,23 @@ if __name__ == '__main__':
                 )
     parser.add_argument('input_file')
     parser.add_argument('-o', '--output-file')
+    parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.1')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.2')
     args = parser.parse_args()
 
     with open(args.input_file) as f:
-        svg = generate_svg(f.readlines())
+        if args.processor == 'ft':
+            output = generate_svg(f.readlines())
+        elif args.processor == 'html':
+            output = process_html(f.read())
+        else:
+            print(f"ERROR: unknow processor: {args.processor}")
+            sys.exit(1)
         if args.output_file:
             if args.verbose:
                 print(f"write file: {args.output_file}")
             with open(args.output_file, 'w') as o:
-                o.write(svg)
+                o.write(output)
         else:
-            print(svg)
+            print(output)
