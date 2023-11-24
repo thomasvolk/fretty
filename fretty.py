@@ -6,6 +6,10 @@ from dataclasses import dataclass
 class Note:
     position: int 
     value: str
+    
+    @property
+    def is_barre():
+        return self.value == '|'
 
     
 class FBString:
@@ -13,9 +17,12 @@ class FBString:
         self.position = position
         self.notes = []
         self.frets = 0
+        self.is_muted = False
         for position, c in enumerate(line.strip()):
             self.frets += 1
-            if c != '-':
+            if c == 'X':
+                self.is_muted = True
+            elif c != '-':
                 self.notes.append(Note(position, c))
     
     def __repr__(self):
@@ -60,6 +67,7 @@ class SvgGenerator:
 {frets}
 {strings}
 {notes}
+{muted}
 </svg>"""
     line_template = '<line x1="{start_x}" y1="{start_y}"  x2="{end_x}" y2="{end_y}"  stroke-width="2" stroke="#000000"/>'
     circle_template = '<circle r="{radius}" cx="{x}" cy="{y}" fill="#000000" stroke-width="0" stroke="#000000"/>'
@@ -101,6 +109,7 @@ class SvgGenerator:
             ) 
             for i in range(0, fretboard.fret_count + 1) 
         ])
+
         def make_note_entry(position, n):
             x = n.position * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2)
             y = position * cfg.string_distance + y_offest
@@ -128,6 +137,7 @@ class SvgGenerator:
                         text=n.value
                     )
                 return result
+
         notes = '\n'.join([
             make_note_entry(s.position, n)
             for s in fretboard.strings for n in s.notes
@@ -141,6 +151,21 @@ class SvgGenerator:
             size=cfg.start_position_space,
             text=fretboard.start_position
         )
+        muted = '\n'.join([
+            self.line_template.format(
+                start_y=s.position * cfg.string_distance + y_offest - cfg.note_radius,
+                end_y=s.position * cfg.string_distance + y_offest + cfg.note_radius,
+                start_x=cfg.margin - cfg.note_radius,
+                end_x=cfg.margin + cfg.note_radius
+            ) + '\n' +
+            self.line_template.format(
+                start_y=s.position * cfg.string_distance + y_offest + cfg.note_radius,
+                end_y=s.position * cfg.string_distance + y_offest - cfg.note_radius,
+                start_x=cfg.margin - cfg.note_radius,
+                end_x=cfg.margin + cfg.note_radius
+            ) 
+            for s in fretboard.strings if s.is_muted
+        ])
 
         return self.main_template.format(
                     attributes=attributes,
@@ -150,7 +175,8 @@ class SvgGenerator:
                     start_position=start_position,
                     frets=frets,
                     strings=strings,
-                    notes=notes
+                    notes=notes,
+                    muted=muted
                 )
 
 
