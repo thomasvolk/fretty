@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Note:
-    position: int 
+    fret: int
+    string: int 
     value: str
     
     @property
@@ -19,13 +20,13 @@ class FBString:
         self.notes = []
         self.frets = 0
         self.is_muted = False
-        for position, c in enumerate(line.strip()):
+        for fret, c in enumerate(line.strip()):
             self.frets += 1
             if c == 'X':
                 self.is_muted = True
             elif c != '-':
-                self.notes.append(Note(position, c))
-    
+                self.notes.append(Note(fret, self.position, c))
+
     def __repr__(self):
         return f"FBString({self.position}, {self.notes})"
 
@@ -42,6 +43,12 @@ class Fretboard:
     @property
     def fret_count(self):
         return max([ s.frets for s in self.strings ])
+
+    def get_note(self, f, s):
+        for note in self.strings[s].notes:
+            if note.fret == f:
+                return note
+        return None
 
     def __repr__(self):
         return f"Fretboard({self.strings})"
@@ -69,6 +76,7 @@ class SvgGenerator:
 {strings}
 {notes}
 {muted}
+{barres}
 </svg>"""
     line_template = '<line x1="{start_x}" y1="{start_y}"  x2="{end_x}" y2="{end_y}"  stroke-width="2" stroke="#000000"/>'
     circle_template = '<circle r="{radius}" cx="{x}" cy="{y}" fill="#000000" stroke-width="0" stroke="#000000"/>'
@@ -111,9 +119,9 @@ class SvgGenerator:
             for i in range(0, fretboard.fret_count + 1) 
         ])
 
-        def make_note_entry(position, n):
-            x = n.position * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2)
-            y = position * cfg.string_distance + y_offest
+        def make_note_entry(n):
+            x = n.fret * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2)
+            y = n.string * cfg.string_distance + y_offest
             if n.value == '#':
                 return self.rect_template.format(
                     width=cfg.note_radius*2,
@@ -140,7 +148,7 @@ class SvgGenerator:
                 return result
 
         notes = '\n'.join([
-            make_note_entry(s.position, n)
+            make_note_entry(n)
             for s in fretboard.strings for n in s.notes
         ])
         start_position = self.text_template.format(
@@ -167,6 +175,16 @@ class SvgGenerator:
             ) 
             for s in fretboard.strings if s.is_muted
         ])
+        barre_map = dict()
+        for f in range(0, fretboard.fret_count):
+            barre = []
+            for s in range(0, fretboard.string_count):
+                n = fretboard.get_note(f, s)
+                if n != None and n.is_barre:
+                    barre.append(n)
+            barre_map[f] = barre
+        print(barre_map)
+        barres = ""
 
         return self.main_template.format(
                     attributes=attributes,
@@ -177,7 +195,8 @@ class SvgGenerator:
                     frets=frets,
                     strings=strings,
                     notes=notes,
-                    muted=muted
+                    muted=muted,
+                    barres=barres
                 )
 
 
