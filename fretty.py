@@ -175,17 +175,25 @@ class SvgGenerator:
             ) 
             for s in fretboard.strings if s.is_muted
         ])
-        barre_map = dict()
+        barre_list = []
         for f in range(0, fretboard.fret_count):
             barre = []
             for s in range(0, fretboard.string_count):
                 n = fretboard.get_note(f, s)
                 if n != None and n.is_barre:
                     barre.append(n)
-            barre_map[f] = barre
-        print(barre_map)
-        barres = ""
-
+            if len(barre) > 1:
+                barre_list.append((barre[0], barre[-1]))
+        barres = '\n'.join([
+            self.rect_template.format(
+                    width=cfg.note_radius*2,
+                    height=(end.string - start.string)*cfg.string_distance,
+                    x=start.fret * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2) - cfg.note_radius,
+                    y=start.string * cfg.string_distance + y_offest
+            )
+            for start, end in barre_list
+        ])
+            
         return self.main_template.format(
                     attributes=attributes,
                     size_attribues=size_attribues,
