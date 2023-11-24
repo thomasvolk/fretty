@@ -162,8 +162,8 @@ def generate_svg(lines, width=None, height=None, embedded=False):
     svg = SvgGenerator(cfg)
     return svg.generate(fb, width=width, height=height, embedded=embedded)
 
-def process_html(html):
-    dom = parseString(html)
+def process_xml(xml):
+    dom = parseString(xml)
     for node in dom.getElementsByTagName("fretty"):
         lines = node.firstChild.data.strip().split("\n")
         svg = generate_svg(lines, width=node.getAttribute('width'), height=node.getAttribute('height'), embedded=True)
@@ -182,14 +182,14 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output-file')
     parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.2')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.3')
     args = parser.parse_args()
 
     with open(args.input_file) as f:
         if args.processor == 'ft':
             output = generate_svg(f.readlines())
-        elif args.processor == 'html':
-            output = process_html(f.read())
+        elif args.processor == 'xml':
+            output = process_xml(f.read())
         else:
             print(f"ERROR: unknow processor: {args.processor}")
             sys.exit(1)
