@@ -8,8 +8,9 @@ class Note:
     value: str
     
     @property
-    def is_barre():
+    def is_barre(self):
         return self.value == '|'
+
 
     
 class FBString:
@@ -126,7 +127,7 @@ class SvgGenerator:
                     x=x,
                     y=y
                 )
-                if n.value != 'o':
+                if n.value != 'o' and not n.is_barre:
                     result += '\n' + self.text_template.format(
                         x=x,
                         y=y,
