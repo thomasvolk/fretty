@@ -162,13 +162,21 @@ def generate_svg(lines, width=None, height=None, embedded=False):
     svg = SvgGenerator(cfg)
     return svg.generate(fb, width=width, height=height, embedded=embedded)
 
-def process_xml(xml):
+def process_xml(xml, embedded=True):
     dom = parseString(xml)
+    count = 0
     for node in dom.getElementsByTagName("fretty"):
         lines = node.firstChild.data.strip().split("\n")
-        svg = generate_svg(lines, width=node.getAttribute('width'), height=node.getAttribute('height'), embedded=True)
-        svgNode = parseString(svg).documentElement
-        node.parentNode.replaceChild(svgNode, node) 
+        svg = generate_svg(lines, width=node.getAttribute('width'), height=node.getAttribute('height'), embedded=embedded)
+        if embedded:
+            replace_node = parseString(svg)
+        else:
+            svg_file = f"fretty-{count}.svg"
+            with open(svg_file, 'w') as f:
+                f.write(svg)
+            replace_node = parseString(f'<img src="{svg_file}" />')
+        node.parentNode.replaceChild(replace_node.documentElement, node)
+        count += 1
     return dom.toxml()
 
 if __name__ == '__main__':
@@ -182,14 +190,16 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output-file')
     parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.3')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.4')
     args = parser.parse_args()
 
     with open(args.input_file) as f:
         if args.processor == 'ft':
             output = generate_svg(f.readlines())
         elif args.processor == 'xml':
-            output = process_xml(f.read())
+            output = process_xml(f.read(), embedded=True)
+        elif args.processor == 'xhtml':
+            output = process_xml(f.read(), embedded=False)
         else:
             print(f"ERROR: unknow processor: {args.processor}")
             sys.exit(1)
