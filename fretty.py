@@ -230,7 +230,7 @@ if __name__ == '__main__':
     parser.add_argument('--png', action='store_true')
     parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.5')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.6')
     args = parser.parse_args()
 
     with open(args.input_file) as f:
