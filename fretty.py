@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-
 from dataclasses import dataclass
-import sys
-from xml.dom.minidom import parseString
+
 
 @dataclass
 class Note:
@@ -162,7 +160,22 @@ def generate_svg(lines, width=None, height=None, embedded=False):
     svg = SvgGenerator(cfg)
     return svg.generate(fb, width=width, height=height, embedded=embedded)
 
-def process_xml(xml, embedded=True):
+
+def write_image(name, svg, as_png):
+    if as_png:
+        import cairosvg
+        png_file = f"{name}.png"
+        cairosvg.svg2png(bytestring=bytes(svg, 'utf-8'), write_to=png_file)
+        return png_file
+    else:
+        svg_file = f"{name}.svg"
+        with open(svg_file, 'w') as f:
+            f.write(svg)
+        return svg_file
+
+def process_xml(xml, embedded=True, png_images=False):
+    from xml.dom.minidom import parseString
+
     dom = parseString(xml)
     count = 0
     for node in dom.getElementsByTagName("fretty"):
@@ -171,16 +184,15 @@ def process_xml(xml, embedded=True):
         if embedded:
             replace_node = parseString(svg)
         else:
-            svg_file = f"fretty-{count}.svg"
-            with open(svg_file, 'w') as f:
-                f.write(svg)
-            replace_node = parseString(f'<img src="{svg_file}" />')
+            image_file = write_image(f"fretty-{count}", svg, as_png=png_images)
+            replace_node = parseString(f'<img src="{image_file}" />')
         node.parentNode.replaceChild(replace_node.documentElement, node)
         count += 1
     return dom.toxml()
 
 if __name__ == '__main__':
     import argparse
+    import sys
 
     parser = argparse.ArgumentParser(
                 prog='fretty',
@@ -188,9 +200,10 @@ if __name__ == '__main__':
                 )
     parser.add_argument('input_file')
     parser.add_argument('-o', '--output-file')
+    parser.add_argument('--png', action='store_true')
     parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.4')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.5')
     args = parser.parse_args()
 
     with open(args.input_file) as f:
@@ -199,7 +212,7 @@ if __name__ == '__main__':
         elif args.processor == 'xml':
             output = process_xml(f.read(), embedded=True)
         elif args.processor == 'xhtml':
-            output = process_xml(f.read(), embedded=False)
+            output = process_xml(f.read(), embedded=False, png_images=args.png)
         else:
             print(f"ERROR: unknow processor: {args.processor}")
             sys.exit(1)
