@@ -190,6 +190,7 @@ def process_xml(xml, embedded=True, png_images=False):
         count += 1
     return dom.toxml()
 
+
 if __name__ == '__main__':
     import argparse
     import sys
