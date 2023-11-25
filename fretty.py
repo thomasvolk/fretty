@@ -20,10 +20,13 @@ class FBString:
         self.notes = []
         self.frets = 0
         self.is_muted = False
+        self.is_open = False
         for fret, c in enumerate(line.strip()):
             self.frets += 1
             if c == 'X':
                 self.is_muted = True
+            elif c == '+':
+                self.is_open = True
             elif c != '-':
                 self.notes.append(Note(fret, self.position, c))
 
@@ -77,9 +80,11 @@ class SvgGenerator:
 {notes}
 {muted}
 {barres}
+{open_strings}
 </svg>"""
     line_template = '<line x1="{start_x}" y1="{start_y}"  x2="{end_x}" y2="{end_y}"  stroke-width="2" stroke="#000000"/>'
-    circle_template = '<circle r="{radius}" cx="{x}" cy="{y}" fill="#000000" stroke-width="0" stroke="#000000"/>'
+    circle_template = '<circle r="{radius}" cx="{x}" cy="{y}" fill="none" stroke-width="2" stroke="#000000"/>'
+    note_template = '<circle r="{radius}" cx="{x}" cy="{y}" fill="#000000" stroke-width="0" stroke="#000000"/>'
     rect_template = '<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="#000000" stroke-width="0" stroke="#000000"/>'
     text_template = '<text x="{x}" y="{y}" font-family="Arial" font-size="{size}" text-anchor="{anchor}" dominant-baseline="{baseline}" fill="{color}">{text}</text>'
 
@@ -130,7 +135,7 @@ class SvgGenerator:
                     y=y - cfg.note_radius
                 )
             else:
-                result = self.circle_template.format(
+                result = self.note_template.format(
                     radius=cfg.note_radius,
                     x=x,
                     y=y
@@ -162,18 +167,26 @@ class SvgGenerator:
         )
         muted = '\n'.join([
             self.line_template.format(
-                start_y=s.position * cfg.string_distance + y_offest - cfg.note_radius,
-                end_y=s.position * cfg.string_distance + y_offest + cfg.note_radius,
-                start_x=cfg.margin - cfg.note_radius,
-                end_x=cfg.margin + cfg.note_radius
+                start_y=s.position * cfg.string_distance + y_offest - (cfg.note_radius * 0.7),
+                end_y=s.position * cfg.string_distance + y_offest + (cfg.note_radius * 0.7),
+                start_x=cfg.margin - (cfg.note_radius * 0.7),
+                end_x=cfg.margin + (cfg.note_radius * 0.7)
             ) + '\n' +
             self.line_template.format(
-                start_y=s.position * cfg.string_distance + y_offest + cfg.note_radius,
-                end_y=s.position * cfg.string_distance + y_offest - cfg.note_radius,
-                start_x=cfg.margin - cfg.note_radius,
-                end_x=cfg.margin + cfg.note_radius
+                start_y=s.position * cfg.string_distance + y_offest + (cfg.note_radius * 0.7),
+                end_y=s.position * cfg.string_distance + y_offest - (cfg.note_radius * 0.7),
+                start_x=cfg.margin - (cfg.note_radius * 0.7),
+                end_x=cfg.margin + (cfg.note_radius * 0.7)
             ) 
             for s in fretboard.strings if s.is_muted
+        ])
+        open_strings = '\n'.join([
+            self.circle_template.format(
+                    radius=cfg.note_radius * 0.7,
+                    y=s.position * cfg.string_distance + y_offest,
+                    x=cfg.margin
+                )
+            for s in fretboard.strings if s.is_open
         ])
         barre_list = []
         for f in range(0, fretboard.fret_count):
@@ -204,7 +217,8 @@ class SvgGenerator:
                     strings=strings,
                     notes=notes,
                     muted=muted,
-                    barres=barres
+                    barres=barres,
+                    open_strings=open_strings
                 )
 
 
@@ -258,7 +272,7 @@ if __name__ == '__main__':
     parser.add_argument('--png', action='store_true')
     parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.6')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.7')
     args = parser.parse_args()
 
     with open(args.input_file) as f:

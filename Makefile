@@ -9,6 +9,7 @@ test:
 	./fretty.py -p xhtml --png example/document.xhtml -o test-doc-03.html
 	./fretty.py example/Amaj7-chord.ft -o test-img-02.svg
 	./fretty.py example/Cm-chord.ft -o test-img-03.svg
+	./fretty.py example/D-chord.ft -o test-img-04.svg
 
 clean:
 	rm -f *.html *.svg *.png
