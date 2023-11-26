@@ -21,7 +21,7 @@ class FBString:
         self.frets = 0
         self.is_muted = False
         self.is_open = False
-        for fret, c in enumerate(line.strip()):
+        for fret, c in enumerate(line.replace(' ', '').strip()):
             self.frets += 1
             if c == 'X':
                 self.is_muted = True
@@ -272,7 +272,7 @@ if __name__ == '__main__':
     parser.add_argument('--png', action='store_true')
     parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.7')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.8')
     args = parser.parse_args()
 
     with open(args.input_file) as f:
