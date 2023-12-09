@@ -13,7 +13,6 @@ class Note:
         return self.value == '|'
 
 
-    
 class FBString:
     def __init__(self, position, line):
         self.position = position
@@ -37,7 +36,7 @@ class FBString:
 class Fretboard:
     def __init__(self, lines):
         self.start_position = lines[0].strip()
-        self.strings = [ FBString(pos, line) for pos, line in enumerate(lines[1:]) if len(line) > 0]
+        self.strings = [FBString(pos, line) for pos, line in enumerate(lines[1:]) if len(line) > 0]
 
     @property
     def string_count(self):
@@ -45,7 +44,7 @@ class Fretboard:
 
     @property
     def fret_count(self):
-        return max([ s.frets for s in self.strings ])
+        return max([s.frets for s in self.strings])
 
     def get_note(self, f, s):
         for note in self.strings[s].notes:
@@ -82,11 +81,13 @@ class SvgGenerator:
 {barres}
 {open_strings}
 </svg>"""
-    line_template = '<line x1="{start_x}" y1="{start_y}"  x2="{end_x}" y2="{end_y}"  stroke-width="2" stroke="#000000"/>'
+    line_template = '<line x1="{start_x}" y1="{start_y}" x2="{end_x}" y2="{end_y}" stroke-width="2" stroke="#000000"/>'
     circle_template = '<circle r="{radius}" cx="{x}" cy="{y}" fill="none" stroke-width="2" stroke="#000000"/>'
     note_template = '<circle r="{radius}" cx="{x}" cy="{y}" fill="#000000" stroke-width="0" stroke="#000000"/>'
-    rect_template = '<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="#000000" stroke-width="0" stroke="#000000"/>'
-    text_template = '<text x="{x}" y="{y}" font-family="Arial" font-size="{size}" text-anchor="{anchor}" dominant-baseline="{baseline}" fill="{color}">{text}</text>'
+    rect_template = ('<rect x="{x}" y="{y}" width="{width}" height="{height}" ' +
+                     'fill="#000000" stroke-width="0" stroke="#000000"/>')
+    text_template = ('<text x="{x}" y="{y}" font-family="Arial" font-size="{size}" text-anchor="{anchor}" '
+                     + 'dominant-baseline="{baseline}" fill="{color}">{text}</text>')
 
     def __init__(self, view_config):
         self.view_config = view_config
@@ -193,7 +194,7 @@ class SvgGenerator:
             barre = []
             for s in range(0, fretboard.string_count):
                 n = fretboard.get_note(f, s)
-                if n != None and n.is_barre:
+                if n and n.is_barre:
                     barre.append(n)
             if len(barre) > 1:
                 barre_list.append((barre[0], barre[-1]))
@@ -241,14 +242,20 @@ def write_image(name, svg, as_png):
             f.write(svg)
         return svg_file
 
-def process_xml(xml, embedded=True, png_images=False):
+
+def process_xml(xml_input, embedded=True, png_images=False):
     from xml.dom.minidom import parseString
 
-    dom = parseString(xml)
+    dom = parseString(xml_input)
     count = 0
     for node in dom.getElementsByTagName("fretty"):
         lines = node.firstChild.data.strip().split("\n")
-        svg = generate_svg(lines, width=node.getAttribute('width'), height=node.getAttribute('height'), embedded=embedded)
+        svg = generate_svg(
+            lines,
+            width=node.getAttribute('width'),
+            height=node.getAttribute('height'),
+            embedded=embedded
+        )
         if embedded:
             replace_node = parseString(svg)
         else:
@@ -257,6 +264,26 @@ def process_xml(xml, embedded=True, png_images=False):
         node.parentNode.replaceChild(replace_node.documentElement, node)
         count += 1
     return dom.toxml()
+
+
+def main(config):
+    with open(config.input_file) as f:
+        if config.processor == 'ft':
+            output = generate_svg(f.readlines())
+        elif config.processor == 'xml':
+            output = process_xml(f.read(), embedded=True)
+        elif config.processor == 'xhtml':
+            output = process_xml(f.read(), embedded=False, png_images=config.png)
+        else:
+            print(f"ERROR: unknow processor: {config.processor}")
+            sys.exit(1)
+        if config.output_file:
+            if config.verbose:
+                print(f"write file: {config.output_file}")
+            with open(config.output_file, 'w') as o:
+                o.write(output)
+        else:
+            print(output)
 
 
 if __name__ == '__main__':
@@ -275,20 +302,4 @@ if __name__ == '__main__':
     parser.add_argument('--version', action='version', version='%(prog)s 1.8')
     args = parser.parse_args()
 
-    with open(args.input_file) as f:
-        if args.processor == 'ft':
-            output = generate_svg(f.readlines())
-        elif args.processor == 'xml':
-            output = process_xml(f.read(), embedded=True)
-        elif args.processor == 'xhtml':
-            output = process_xml(f.read(), embedded=False, png_images=args.png)
-        else:
-            print(f"ERROR: unknow processor: {args.processor}")
-            sys.exit(1)
-        if args.output_file:
-            if args.verbose:
-                print(f"write file: {args.output_file}")
-            with open(args.output_file, 'w') as o:
-                o.write(output)
-        else:
-            print(output)
+    main(args)
