@@ -230,20 +230,24 @@ def generate_svg(lines, width=None, height=None, embedded=False):
     return svg.generate(fb, width=width, height=height, embedded=embedded)
 
 
-def write_image(name, svg, as_png):
+def write_image(name, svg, as_png, output_file=None):
+    import os
+    target_path = ''
+    if output_file:
+        target_path = os.path.dirname(output_file)
     if as_png:
         import cairosvg
         png_file = f"{name}.png"
-        cairosvg.svg2png(bytestring=bytes(svg, 'utf-8'), write_to=png_file)
+        cairosvg.svg2png(bytestring=bytes(svg, 'utf-8'), write_to=os.path.join(target_path, png_file))
         return png_file
     else:
         svg_file = f"{name}.svg"
-        with open(svg_file, 'w') as f:
+        with open(os.path.join(target_path, svg_file), 'w') as f:
             f.write(svg)
         return svg_file
 
 
-def process_xml(xml_input, embedded=True, png_images=False):
+def process_xml(xml_input, embedded=True, png_images=False, output_file=None):
     from xml.dom.minidom import parseString
 
     dom = parseString(xml_input)
@@ -259,7 +263,7 @@ def process_xml(xml_input, embedded=True, png_images=False):
         if embedded:
             replace_node = parseString(svg)
         else:
-            image_file = write_image(f"fretty-{count}", svg, as_png=png_images)
+            image_file = write_image(f"fretty-{count}", svg, as_png=png_images, output_file=output_file)
             replace_node = parseString(f'<img src="{image_file}" />')
         node.parentNode.replaceChild(replace_node.documentElement, node)
         count += 1
@@ -271,9 +275,9 @@ def main(config):
         if config.processor == 'ft':
             output = generate_svg(f.readlines())
         elif config.processor == 'xml':
-            output = process_xml(f.read(), embedded=True)
+            output = process_xml(f.read(), embedded=True, output_file=config.output_file)
         elif config.processor == 'xhtml':
-            output = process_xml(f.read(), embedded=False, png_images=config.png)
+            output = process_xml(f.read(), embedded=False, output_file=config.output_file, png_images=config.png)
         else:
             print(f"ERROR: unknow processor: {config.processor}")
             sys.exit(1)
@@ -299,7 +303,7 @@ if __name__ == '__main__':
     parser.add_argument('--png', action='store_true')
     parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.8')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.9')
     args = parser.parse_args()
 
     main(args)

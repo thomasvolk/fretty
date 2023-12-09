@@ -1,6 +1,4 @@
 .DS_Store
-*.svg
-*.png
-*.html
 .idea/
 venv
+out
