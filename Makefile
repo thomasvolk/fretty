@@ -4,6 +4,7 @@ test:
 	mkdir -p out
 	./fretty.py --version
 	./fretty.py --help
+	./fretty.py example/C-major-arpeggio.ft -o out/C-major-arpeggio.svg
 	./fretty.py example/C-major-scale-box1.ft -o out/C-major-scale-box1.svg
 	./fretty.py example/C-major-scale-box2.ft -o out/C-major-scale-box2.svg
 	./fretty.py -p xml example/document.xhtml -o out/test-doc-01.html
