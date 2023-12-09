@@ -71,7 +71,7 @@ class SvgGenerator:
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns:svgjs="http://svgjs.com/svgjs" 
      preserveAspectRatio="xMidYMid meet" """
-    main_template = """<svg {attributes} {size_attribues}
+    main_template = """<svg {attributes} {size_attributes}
      viewBox="0 0 {width} {height}">
 {start_position}
 {frets}
@@ -96,20 +96,20 @@ class SvgGenerator:
         attributes = ""
         if not embedded:
             attributes = self.stand_alone_attributes
-        size_attribues = ""
+        size_attributes = ""
         if width:
-            size_attribues += f' width="{width}" '
+            size_attributes += f' width="{width}" '
         if height:
-            size_attribues += f' height="{height}"'
+            size_attributes += f' height="{height}"'
 
         cfg = self.view_config
         width = fretboard.fret_count * cfg.fret_distance + (2 * cfg.margin)
         height = fretboard.string_count * cfg.string_distance + (2 * cfg.margin)
-        y_offest = cfg.margin + cfg.start_position_space
+        y_offset = cfg.margin + cfg.start_position_space
         strings = '\n'.join([ 
             self.line_template.format(
-                start_y=i*cfg.string_distance + y_offest,
-                end_y=i*cfg.string_distance + y_offest,
+                start_y=i*cfg.string_distance + y_offset,
+                end_y=i*cfg.string_distance + y_offset,
                 start_x=cfg.margin,
                 end_x=width - cfg.margin
             ) 
@@ -117,7 +117,7 @@ class SvgGenerator:
         ])
         frets = '\n'.join([ 
             self.line_template.format(
-                start_y=y_offest,
+                start_y=y_offset,
                 end_y=height - cfg.margin,
                 start_x=i*cfg.fret_distance + cfg.margin,
                 end_x=i*cfg.fret_distance + cfg.margin
@@ -127,7 +127,7 @@ class SvgGenerator:
 
         def make_note_entry(n):
             x = n.fret * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2)
-            y = n.string * cfg.string_distance + y_offest
+            y = n.string * cfg.string_distance + y_offset
             if n.value == '#':
                 return self.rect_template.format(
                     width=cfg.note_radius*2,
@@ -168,14 +168,14 @@ class SvgGenerator:
         )
         muted = '\n'.join([
             self.line_template.format(
-                start_y=s.position * cfg.string_distance + y_offest - (cfg.note_radius * 0.7),
-                end_y=s.position * cfg.string_distance + y_offest + (cfg.note_radius * 0.7),
+                start_y=s.position * cfg.string_distance + y_offset - (cfg.note_radius * 0.7),
+                end_y=s.position * cfg.string_distance + y_offset + (cfg.note_radius * 0.7),
                 start_x=cfg.margin - (cfg.note_radius * 0.7),
                 end_x=cfg.margin + (cfg.note_radius * 0.7)
             ) + '\n' +
             self.line_template.format(
-                start_y=s.position * cfg.string_distance + y_offest + (cfg.note_radius * 0.7),
-                end_y=s.position * cfg.string_distance + y_offest - (cfg.note_radius * 0.7),
+                start_y=s.position * cfg.string_distance + y_offset + (cfg.note_radius * 0.7),
+                end_y=s.position * cfg.string_distance + y_offset - (cfg.note_radius * 0.7),
                 start_x=cfg.margin - (cfg.note_radius * 0.7),
                 end_x=cfg.margin + (cfg.note_radius * 0.7)
             ) 
@@ -184,7 +184,7 @@ class SvgGenerator:
         open_strings = '\n'.join([
             self.circle_template.format(
                     radius=cfg.note_radius * 0.7,
-                    y=s.position * cfg.string_distance + y_offest,
+                    y=s.position * cfg.string_distance + y_offset,
                     x=cfg.margin
                 )
             for s in fretboard.strings if s.is_open
@@ -203,14 +203,14 @@ class SvgGenerator:
                     width=cfg.note_radius*2,
                     height=(end.string - start.string)*cfg.string_distance,
                     x=start.fret * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2) - cfg.note_radius,
-                    y=start.string * cfg.string_distance + y_offest
+                    y=start.string * cfg.string_distance + y_offset
             )
             for start, end in barre_list
         ])
             
         return self.main_template.format(
                     attributes=attributes,
-                    size_attribues=size_attribues,
+                    size_attributes=size_attributes,
                     width=width, 
                     height=height, 
                     start_position=start_position,
@@ -279,7 +279,7 @@ def main(config):
         elif config.processor == 'xhtml':
             output = process_xml(f.read(), embedded=False, output_file=config.output_file, png_images=config.png)
         else:
-            print(f"ERROR: unknow processor: {config.processor}")
+            print(f"ERROR: unknown processor: {config.processor}")
             sys.exit(1)
         if config.output_file:
             if config.verbose:
