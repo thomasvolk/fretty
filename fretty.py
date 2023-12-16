@@ -275,7 +275,7 @@ def process_html(html_input, embedded=True, png_images=False, output_file=None):
 
     doc = lxml.html.document_fromstring(html_input)
     count = 0
-    for node in doc.findall("fretty"):
+    for node in doc.findall(".//fretty"):
         lines = node.text.strip().split("\n")
         svg = generate_svg(
             lines,
@@ -288,9 +288,9 @@ def process_html(html_input, embedded=True, png_images=False, output_file=None):
         else:
             image_file = write_image(f"fretty-{count}", svg, as_png=png_images, output_file=output_file)
             replace_node = lxml.html.fromstring(f'<img src="{image_file}" />')
-        node.getparent().replace(replace_node, node)
+        node.getparent().replace(node, replace_node)
         count += 1
-    return lxml.html.tostring(doc)
+    return lxml.html.tostring(doc, encoding='unicode')
 
 
 def main(config):
@@ -307,7 +307,7 @@ def main(config):
                 png_images=config.png
             )
         elif config.processor == 'html':
-            output = process_xml(
+            output = process_html(
                 f.read(),
                 embedded=config.embed_svg,
                 output_file=config.output_file,

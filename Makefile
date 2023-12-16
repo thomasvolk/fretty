@@ -10,6 +10,7 @@ test:
 	./fretty.py -p xml example/document.xhtml -o out/test-doc-01.html
 	./fretty.py -p xhtml example/document.xhtml -o out/test-doc-02.html
 	./fretty.py -p xhtml --png example/document.xhtml -o out/test-doc-03.html
+	./fretty.py -p html example/document-lilypond.html -o out/test-doc-04.html
 	./fretty.py example/Amaj7-chord.ft -o out/Amaj7-chord.svg
 	./fretty.py example/Cm-chord.ft -o out/Cm-chord.svg
 	./fretty.py example/D-chord.ft -o out/D-chord.svg

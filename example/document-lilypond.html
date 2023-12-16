@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>My Music Book</title>
+        <meta name="author" content="Thomas Volk"/>
+    </head>
+    <body>
+
+        <h1>Major scale</h1>
+
+        <p>C Major</p>
+
+        <lilypond fragment  staffsize="22">
+            <<
+                \chords {
+                    \set majorSevenSymbol = \markup { maj7 }
+                    c1:maj7 d1:m7 e1:m7 f1:maj7 g1:7 a1:m7 b1:m7.5- c2:maj7
+                }
+                \new Staff \relative c'
+                {
+                    \key c \major
+                    \hide Staff.TimeSignature
+                    \omit Score.BarLine
+                    {
+                        c1 d e (f) g a b (c)
+                    }
+                }
+            >>
+        </lilypond>
+
+        <hr>
+
+
+        <p>C major box I</p>
+        <fretty width="400">
+    II
+    -#-o-o1
+    -#-oo-o
+    #-o1-o-
+    #o-o-o-
+    #1-o-o-
+    -o-o-o-
+        </fretty>
+        <p>C major box II</p>
+        <fretty width="400">
+    VII
+    ##-o-oo
+    -#o-o1
+    #-oo-o-
+    #-o1-o-
+    #o-o-o-
+    #1-o-o-
+        </fretty>
+
+    </body>
+</html>
+
+
