@@ -270,6 +270,29 @@ def process_xml(xml_input, embedded=True, png_images=False, output_file=None):
     return dom.toxml()
 
 
+def process_html(html_input, embedded=True, png_images=False, output_file=None):
+    import lxml.html
+
+    doc = lxml.html.document_fromstring(html_input)
+    count = 0
+    for node in doc.findall("fretty"):
+        lines = node.text.strip().split("\n")
+        svg = generate_svg(
+            lines,
+            width=node.get('width'),
+            height=node.get('height'),
+            embedded=embedded
+        )
+        if embedded:
+            replace_node = lxml.html.fromstring(svg)
+        else:
+            image_file = write_image(f"fretty-{count}", svg, as_png=png_images, output_file=output_file)
+            replace_node = lxml.html.fromstring(f'<img src="{image_file}" />')
+        node.getparent().replace(replace_node, node)
+        count += 1
+    return lxml.html.tostring(doc)
+
+
 def main(config):
     with open(config.input_file) as f:
         if config.processor == 'ft':
@@ -277,7 +300,19 @@ def main(config):
         elif config.processor == 'xml':
             output = process_xml(f.read(), embedded=True, output_file=config.output_file)
         elif config.processor == 'xhtml':
-            output = process_xml(f.read(), embedded=False, output_file=config.output_file, png_images=config.png)
+            output = process_xml(
+                f.read(),
+                embedded=config.embed_svg,
+                output_file=config.output_file,
+                png_images=config.png
+            )
+        elif config.processor == 'html':
+            output = process_xml(
+                f.read(),
+                embedded=config.embed_svg,
+                output_file=config.output_file,
+                png_images=config.png
+            )
         else:
             print(f"ERROR: unknown processor: {config.processor}")
             sys.exit(1)
@@ -301,9 +336,10 @@ if __name__ == '__main__':
     parser.add_argument('input_file')
     parser.add_argument('-o', '--output-file')
     parser.add_argument('--png', action='store_true')
+    parser.add_argument('-e', '--embed-svg', action='store_true')
     parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.9')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.10')
     args = parser.parse_args()
 
     main(args)
