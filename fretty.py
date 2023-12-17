@@ -148,7 +148,7 @@ class SvgGenerator:
             x = n.fret * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2)
             y = n.string * cfg.string_distance + y_offset
             if n.value == '#':
-                return self.rect_template.format(
+                result = self.rect_template.format(
                     width=cfg.note_radius*2,
                     height=cfg.note_radius*2,
                     x=x - cfg.note_radius,
@@ -160,17 +160,17 @@ class SvgGenerator:
                     x=x,
                     y=y
                 )
-                if n.value != 'o' and not n.is_barre:
-                    result += '\n' + self.text_template.format(
-                        x=x,
-                        y=y,
-                        anchor='middle',
-                        baseline='middle',
-                        color='#FFFFFF',
-                        size=cfg.note_radius,
-                        text=n.value
-                    )
-                return result
+            if n.value not in ('o', '#') and not n.is_barre:
+                result += '\n' + self.text_template.format(
+                    x=x,
+                    y=y,
+                    anchor='middle',
+                    baseline='middle',
+                    color='#FFFFFF',
+                    size=cfg.note_radius,
+                    text=n.value
+                )
+            return result
 
         notes = '\n'.join([
             make_note_entry(n)
