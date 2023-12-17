@@ -14,6 +14,8 @@ test:
 	./fretty.py example/Amaj7-chord.ft -o out/Amaj7-chord.svg
 	./fretty.py example/Cm-chord.ft -o out/Cm-chord.svg
 	./fretty.py example/D-chord.ft -o out/D-chord.svg
+	./fretty.py example/C-major.ft -o out/C-major.svg
+
 
 clean:
 	rm -rf out

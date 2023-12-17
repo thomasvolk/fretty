@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from dataclasses import dataclass
 
 
@@ -14,20 +15,38 @@ class Note:
 
 
 class FBString:
+    NOTE_START = ('(', '[', '{', '<')
+    NOTE_END = (')', ']', '}', '>')
+
     def __init__(self, position, line):
         self.position = position
         self.notes = []
         self.frets = 0
         self.is_muted = False
         self.is_open = False
-        for fret, c in enumerate(line.replace(' ', '').strip()):
-            self.frets += 1
+        current_note = None
+        for c in line.replace(' ', '').strip():
+            if c in self.NOTE_START and not current_note:
+                current_note = Note(self.frets, self.position, '')
+                continue
+            elif c in self.NOTE_END:
+                if not current_note.value:
+                    current_note.value = 'o'
+                self.notes.append(current_note)
+                current_note = None
+                self.frets += 1
+                continue
+            if current_note:
+                current_note.value += c
+                continue
+
             if c == 'X':
                 self.is_muted = True
             elif c == '+':
                 self.is_open = True
             elif c != '-':
-                self.notes.append(Note(fret, self.position, c))
+                self.notes.append(Note(self.frets, self.position, c))
+            self.frets += 1
 
     def __repr__(self):
         return f"FBString({self.position}, {self.notes})"
@@ -339,7 +358,7 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--embed-svg', action='store_true')
     parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.10')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.11')
     args = parser.parse_args()
 
     main(args)
