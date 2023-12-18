@@ -22,7 +22,7 @@
 <text x="170.0" y="60" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">vi</text>
 <circle r="15" cx="290.0" cy="60" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="290.0" y="60" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">vii</text>
-<circle r="15" cx="350.0" cy="60" fill="#000000" stroke-width="0" stroke="#000000"/>
+<rect x="335.0" y="45" width="30" height="30" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="350.0" y="60" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">I</text>
 <circle r="15" cx="170.0" cy="100" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="170.0" y="100" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">iii</text>
@@ -32,7 +32,7 @@
 <text x="350.0" y="100" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">V</text>
 <circle r="15" cx="110.0" cy="140" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="110.0" y="140" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">vii</text>
-<circle r="15" cx="170.0" cy="140" fill="#000000" stroke-width="0" stroke="#000000"/>
+<rect x="155.0" y="125" width="30" height="30" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="170.0" y="140" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">I</text>
 <circle r="15" cx="290.0" cy="140" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="290.0" y="140" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">ii</text>
@@ -42,7 +42,7 @@
 <text x="170.0" y="180" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">V</text>
 <circle r="15" cx="290.0" cy="180" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="290.0" y="180" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">vi</text>
-<circle r="15" cx="50.0" cy="220" fill="#000000" stroke-width="0" stroke="#000000"/>
+<rect x="35.0" y="205" width="30" height="30" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="50.0" y="220" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">I</text>
 <circle r="15" cx="170.0" cy="220" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="170.0" y="220" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">ii</text>

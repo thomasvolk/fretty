@@ -1,6 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from dataclasses import dataclass
+from enum import Enum
+
+
+class Shape(Enum):
+    CIRCLE = 1
+    SQUARE = 2
+
+    @staticmethod
+    def get_shape(c):
+        if c in ('[', '#'):
+            return Shape.SQUARE
+        return Shape.CIRCLE
 
 
 @dataclass
@@ -8,7 +20,8 @@ class Note:
     fret: int
     string: int 
     value: str
-    
+    shape: Shape
+
     @property
     def is_barre(self):
         return self.value == '|'
@@ -27,11 +40,9 @@ class FBString:
         current_note = None
         for c in line.replace(' ', '').strip():
             if c in self.NOTE_START and not current_note:
-                current_note = Note(self.frets, self.position, '')
+                current_note = Note(self.frets, self.position, '', Shape.get_shape(c))
                 continue
             elif c in self.NOTE_END:
-                if not current_note.value:
-                    current_note.value = 'o'
                 self.notes.append(current_note)
                 current_note = None
                 self.frets += 1
@@ -45,7 +56,11 @@ class FBString:
             elif c == '+':
                 self.is_open = True
             elif c != '-':
-                self.notes.append(Note(self.frets, self.position, c))
+                if c in ('o', '#'):
+                    value = ''
+                else:
+                    value = c
+                self.notes.append(Note(self.frets, self.position, value, Shape.get_shape(c)))
             self.frets += 1
 
     def __repr__(self):
@@ -147,7 +162,7 @@ class SvgGenerator:
         def make_note_entry(n):
             x = n.fret * cfg.fret_distance + cfg.margin + (cfg.fret_distance/2)
             y = n.string * cfg.string_distance + y_offset
-            if n.value == '#':
+            if n.shape == Shape.SQUARE:
                 result = self.rect_template.format(
                     width=cfg.note_radius*2,
                     height=cfg.note_radius*2,
@@ -160,7 +175,7 @@ class SvgGenerator:
                     x=x,
                     y=y
                 )
-            if n.value not in ('o', '#') and not n.is_barre:
+            if n.value and not n.is_barre:
                 result += '\n' + self.text_template.format(
                     x=x,
                     y=y,
