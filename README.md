@@ -4,9 +4,11 @@ Fretty is a guitar fretboard generator.
 
 how to run fretty:
 
-    ./fretty.py my-scale.ft -o my-scale.svg
+    ./fretty.py example/C-major-scale-box1.ft -o C-major-scale-box1.svg
 
-This will produce the file my-scale.svg
+This will produce the file C-major-scale-box1.svg
+
+## Basic Format
 
 ```
 III
@@ -55,3 +57,41 @@ X---
 ```
 
 ![Cm-chord.svg](example/Cm-chord.svg)
+
+* '+' is a open string
+
+```
+I
+--o-
+---o
+--o-
++---
+X---
+X---
+```
+
+![D-chord.svg](example/D-chord.svg)
+
+## Extended Format
+
+You can enclose any text with branches.
+* '(' for circle notes
+* '[' for square notes
+
+```
+III
+  -    -    (vi)    -   (vii)  [I]
+  -    -    (iii)  (IV)   -    (V)
+  -  (vii)  [I]     -    (ii)   -
+(IV)   -    (V)     -    (vi)   -
+[I]    -    (ii)    -    (iii)  -
+(V)    -    (vi)    -    (vii)  -
+```
+
+![C-major.svg](example/C-major.svg)
+
+
+## Additional Information
+
+This project was inspired by 
+[svguitar](https://github.com/omnibrain/svguitar).
