@@ -27,7 +27,7 @@ Every line which follows is the representation on string.
 * '#' is a note as square shape
 * '-' is an empty place
 
-![C-major-scale-box1.svg](example/C-major-scale-box1.svg)
+<img src="example/C-major-scale-box1.svg" width="200">
 
 * numbers are displayed as notes
 
@@ -41,7 +41,7 @@ II
 -5--
 ```
 
-![C-major-arpeggio.svg](example/C-major-arpeggio.svg)
+<img src="example/C-major-arpeggio.svg" width="200">
 
 * '|' is for a barre note
 * 'X' is a muted string
@@ -56,7 +56,7 @@ III
 X---
 ```
 
-![Cm-chord.svg](example/Cm-chord.svg)
+<img src="example/Cm-chord.svg" width="200">
 
 * '+' is a open string
 
@@ -70,7 +70,7 @@ X---
 X---
 ```
 
-![D-chord.svg](example/D-chord.svg)
+<img src="example/D-chord.svg" width="200">
 
 ## Extended Format
 
@@ -88,8 +88,7 @@ III
 (V)    -    (vi)    -    (vii)  -
 ```
 
-![C-major.svg](example/C-major.svg)
-
+<img src="example/C-major.svg" width="200">
 
 ## Additional Information
 
