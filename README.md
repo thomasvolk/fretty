@@ -75,8 +75,8 @@ X---
 ## Extended Format
 
 You can enclose any text with branches.
-* '(' for circle notes
-* '[' for square notes
+* '(' - ')' for circle notes
+* '[' - ']' for square notes
 
 ```
 III
@@ -89,6 +89,22 @@ III
 ```
 
 <img src="example/C-major.svg" width="200">
+
+If you close the note by using the barre synbol, instead of the closing branch,
+the note will be part of a barre symbol.
+
+```
+V
+(5|   -   -   -
+|    (3)  -   -
+(7|   -   -   -
+|     -  (5)  -
+(1|   -   -   -
+X     -   -   -
+```
+
+<img src="example/Dm7-chord.svg" width="200">
+
 
 ## Additional Information
 
