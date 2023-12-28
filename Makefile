@@ -16,6 +16,8 @@ test:
 	./fretty.py example/Amaj7-chord.ft -o out/Amaj7-chord.svg
 	./fretty.py example/Cm-chord.ft -o out/Cm-chord.svg
 	diff out/Cm-chord.svg example/Cm-chord.svg
+	./fretty.py example/Dm7-chord.ft -o out/Dm7-chord.svg
+	diff out/Dm7-chord.svg example/Dm7-chord.svg
 	./fretty.py example/D-chord.ft -o out/D-chord.svg
 	diff out/D-chord.svg example/D-chord.svg
 	./fretty.py example/C-major.ft -o out/C-major.svg

@@ -21,15 +21,12 @@ class Note:
     string: int 
     value: str
     shape: Shape
-
-    @property
-    def is_barre(self):
-        return self.value == '|'
+    is_barre: bool = False
 
 
 class FBString:
     NOTE_START = ('(', '[', '{', '<')
-    NOTE_END = (')', ']', '}', '>')
+    NOTE_END = (')', ']', '}', '>', '|')
 
     def __init__(self, position, line):
         self.position = position
@@ -42,7 +39,8 @@ class FBString:
             if c in self.NOTE_START and not current_note:
                 current_note = Note(self.frets, self.position, '', Shape.get_shape(c))
                 continue
-            elif c in self.NOTE_END:
+            elif c in self.NOTE_END and current_note:
+                current_note.is_barre = c == '|'
                 self.notes.append(current_note)
                 current_note = None
                 self.frets += 1
@@ -56,11 +54,11 @@ class FBString:
             elif c == '+':
                 self.is_open = True
             elif c != '-':
-                if c in ('o', '#'):
+                if c in ('o', '#', '|'):
                     value = ''
                 else:
                     value = c
-                self.notes.append(Note(self.frets, self.position, value, Shape.get_shape(c)))
+                self.notes.append(Note(self.frets, self.position, value, Shape.get_shape(c), c == '|'))
             self.frets += 1
 
     def __repr__(self):
@@ -110,9 +108,9 @@ class SvgGenerator:
 {start_position}
 {frets}
 {strings}
+{barres}
 {notes}
 {muted}
-{barres}
 {open_strings}
 </svg>"""
     line_template = '<line x1="{start_x}" y1="{start_y}" x2="{end_x}" y2="{end_y}" stroke-width="2" stroke="#000000"/>'
@@ -175,7 +173,7 @@ class SvgGenerator:
                     x=x,
                     y=y
                 )
-            if n.value and not n.is_barre:
+            if n.value:
                 result += '\n' + self.text_template.format(
                     x=x,
                     y=y,
@@ -373,7 +371,7 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--embed-svg', action='store_true')
     parser.add_argument('-p', '--processor', default="ft")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.11')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.12')
     args = parser.parse_args()
 
     main(args)

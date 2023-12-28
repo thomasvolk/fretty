@@ -4,7 +4,7 @@
      xmlns:svgjs="http://svgjs.com/svgjs" 
      preserveAspectRatio="xMidYMid meet"  
      viewBox="0 0 280 280">
-<text x="20" y="40.0" font-family="Arial" font-size="40" text-anchor="start" dominant-baseline="auto" fill="#000000">III</text>
+<text x="20" y="40.0" font-family="Arial" font-size="40" text-anchor="start" dominant-baseline="auto" fill="#000000">V</text>
 <line x1="20" y1="60" x2="20" y2="260" stroke-width="2" stroke="#000000"/>
 <line x1="80" y1="60" x2="80" y2="260" stroke-width="2" stroke="#000000"/>
 <line x1="140" y1="60" x2="140" y2="260" stroke-width="2" stroke="#000000"/>
@@ -18,13 +18,17 @@
 <line x1="20" y1="260" x2="260" y2="260" stroke-width="2" stroke="#000000"/>
 <rect x="35.0" y="60" width="30" height="160" fill="#000000" stroke-width="0" stroke="#000000"/>
 <circle r="15" cx="50.0" cy="60" fill="#000000" stroke-width="0" stroke="#000000"/>
+<text x="50.0" y="60" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">5</text>
 <circle r="15" cx="50.0" cy="100" fill="#000000" stroke-width="0" stroke="#000000"/>
 <circle r="15" cx="110.0" cy="100" fill="#000000" stroke-width="0" stroke="#000000"/>
+<text x="110.0" y="100" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">3</text>
 <circle r="15" cx="50.0" cy="140" fill="#000000" stroke-width="0" stroke="#000000"/>
-<circle r="15" cx="170.0" cy="140" fill="#000000" stroke-width="0" stroke="#000000"/>
+<text x="50.0" y="140" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">7</text>
 <circle r="15" cx="50.0" cy="180" fill="#000000" stroke-width="0" stroke="#000000"/>
 <circle r="15" cx="170.0" cy="180" fill="#000000" stroke-width="0" stroke="#000000"/>
+<text x="170.0" y="180" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">5</text>
 <circle r="15" cx="50.0" cy="220" fill="#000000" stroke-width="0" stroke="#000000"/>
+<text x="50.0" y="220" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">1</text>
 <line x1="9.5" y1="249.5" x2="30.5" y2="270.5" stroke-width="2" stroke="#000000"/>
 <line x1="9.5" y1="270.5" x2="30.5" y2="249.5" stroke-width="2" stroke="#000000"/>
 

@@ -18,6 +18,7 @@
 <line x1="20" y1="180" x2="380" y2="180" stroke-width="2" stroke="#000000"/>
 <line x1="20" y1="220" x2="380" y2="220" stroke-width="2" stroke="#000000"/>
 <line x1="20" y1="260" x2="380" y2="260" stroke-width="2" stroke="#000000"/>
+
 <circle r="15" cx="170.0" cy="60" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="170.0" y="60" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">vi</text>
 <circle r="15" cx="290.0" cy="60" fill="#000000" stroke-width="0" stroke="#000000"/>
@@ -54,7 +55,6 @@
 <text x="170.0" y="260" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">vi</text>
 <circle r="15" cx="290.0" cy="260" fill="#000000" stroke-width="0" stroke="#000000"/>
 <text x="290.0" y="260" font-family="Arial" font-size="15" text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">vii</text>
-
 
 
 </svg>
