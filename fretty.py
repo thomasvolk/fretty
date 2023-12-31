@@ -366,12 +366,14 @@ if __name__ == '__main__':
                 description='Fretty is a guitar fretboard generator'
                 )
     parser.add_argument('input_file')
-    parser.add_argument('-o', '--output-file')
-    parser.add_argument('--png', action='store_true')
-    parser.add_argument('-e', '--embed-svg', action='store_true')
-    parser.add_argument('-p', '--processor', default="ft")
+    parser.add_argument('-o', '--output-file', help="output file name")
+    parser.add_argument('--png', action='store_true', help="use png images files instead of svg")
+    parser.add_argument('-e', '--embed-svg', action='store_true',
+                        help="embed svg into the output (only for xml and xhtml)")
+    parser.add_argument('-p', '--processor', default="ft", choices=('ft', 'html', 'xhtml', 'xml'),
+                        help="type of input processing")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.12')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.12.1')
     args = parser.parse_args()
 
     main(args)
