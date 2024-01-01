@@ -119,7 +119,7 @@ class SvgGenerator:
     rect_template = ('<rect x="{x}" y="{y}" width="{width}" height="{height}" ' +
                      'fill="#000000" stroke-width="0" stroke="#000000"/>')
     text_template = ('<text x="{x}" y="{y}" font-family="Arial" font-size="{size}" text-anchor="{anchor}" '
-                     + 'dominant-baseline="{baseline}" fill="{color}">{text}</text>')
+                     + 'dominant-baseline="{baseline}" fill="{color}" font-weight="{weight}">{text}</text>')
 
     def __init__(self, view_config):
         self.view_config = view_config
@@ -181,7 +181,8 @@ class SvgGenerator:
                     baseline='middle',
                     color='#FFFFFF',
                     size=cfg.note_radius,
-                    text=n.value
+                    text=n.value,
+                    weight='bold'
                 )
             return result
 
@@ -196,7 +197,8 @@ class SvgGenerator:
             baseline='auto',
             color='#000000',
             size=cfg.start_position_space,
-            text=fretboard.start_position
+            text=fretboard.start_position,
+            weight='normal'
         )
         muted = '\n'.join([
             self.line_template.format(
@@ -373,7 +375,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--processor', default="ft", choices=('ft', 'html', 'xhtml', 'xml'),
                         help="type of input processing")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.12.1')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.13')
     args = parser.parse_args()
 
     main(args)
