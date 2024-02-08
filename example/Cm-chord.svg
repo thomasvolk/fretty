@@ -4,7 +4,7 @@
      xmlns:svgjs="http://svgjs.com/svgjs" 
      preserveAspectRatio="xMidYMid meet"  
      viewBox="0 0 280 280">
-<text x="20" y="40.0" font-family="Arial" font-size="40" text-anchor="start" dominant-baseline="auto" fill="#000000">III</text>
+<text x="20" y="40.0" font-family="Arial" font-size="40" text-anchor="start" dominant-baseline="auto" fill="#000000" font-weight="normal">III</text>
 <line x1="20" y1="60" x2="20" y2="260" stroke-width="2" stroke="#000000"/>
 <line x1="80" y1="60" x2="80" y2="260" stroke-width="2" stroke="#000000"/>
 <line x1="140" y1="60" x2="140" y2="260" stroke-width="2" stroke="#000000"/>
