@@ -66,7 +66,8 @@ class FBString:
 
 
 class Fretboard:
-    def __init__(self, lines):
+    def __init__(self, input_lines):
+        lines = [l for l in input_lines if len(l.strip()) > 0]
         self.start_position = lines[0].strip()
         self.strings = [FBString(pos, line) for pos, line in enumerate(lines[1:]) if len(line) > 0]
 
@@ -375,7 +376,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--processor', default="ft", choices=('ft', 'html', 'xhtml', 'xml'),
                         help="type of input processing")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.13')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.14')
     args = parser.parse_args()
 
     main(args)
