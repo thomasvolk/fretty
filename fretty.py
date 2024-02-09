@@ -288,7 +288,7 @@ def process_xml(xml_input, embedded=True, png_images=False, output_file=None):
     dom = parseString(xml_input)
     count = 0
     for node in dom.getElementsByTagName("fretty"):
-        lines = node.firstChild.data.strip().split("\n")
+        lines = [l for child in node.childNodes for l in child.data.strip().split("\n")]
         svg = generate_svg(
             lines,
             width=node.getAttribute('width'),
@@ -376,7 +376,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--processor', default="ft", choices=('ft', 'html', 'xhtml', 'xml'),
                         help="type of input processing")
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.14')
+    parser.add_argument('--version', action='version', version='%(prog)s 1.15')
     args = parser.parse_args()
 
     main(args)
