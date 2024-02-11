@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 from dataclasses import dataclass
 from enum import Enum
+import os
 
 
 class Shape(Enum):
@@ -265,21 +264,15 @@ def generate_svg(lines, width=None, height=None, embedded=False):
     return svg.generate(fb, width=width, height=height, embedded=embedded)
 
 
-def write_image(name, svg, as_png, output_file=None):
-    import os
-    target_path = ''
-    if output_file:
-        target_path = os.path.dirname(output_file)
-    if as_png:
+def write_image(name, svg, target_path=''):
+    if name.endswith('.png'):
         import cairosvg
-        png_file = f"{name}.png"
-        cairosvg.svg2png(bytestring=bytes(svg, 'utf-8'), write_to=os.path.join(target_path, png_file))
-        return png_file
+        cairosvg.svg2png(bytestring=bytes(svg, 'utf-8'), write_to=os.path.join(target_path, name))
+        return name
     else:
-        svg_file = f"{name}.svg"
-        with open(os.path.join(target_path, svg_file), 'w') as f:
+        with open(os.path.join(target_path, name), 'w') as f:
             f.write(svg)
-        return svg_file
+        return name
 
 
 def process_xml(xml_input, embedded=True, png_images=False, output_file=None):
@@ -298,7 +291,8 @@ def process_xml(xml_input, embedded=True, png_images=False, output_file=None):
         if embedded:
             replace_node = parseString(svg)
         else:
-            image_file = write_image(f"fretty-{count}", svg, as_png=png_images, output_file=output_file)
+            extension = 'png' if png_images else 'svg'
+            image_file = write_image(f"fretty-{count}.{extension}", svg, as_png=png_images, target_path=os.path.dirname(output_file))
             replace_node = parseString(f'<img src="{image_file}" />')
         node.parentNode.replaceChild(replace_node.documentElement, node)
         count += 1
@@ -321,62 +315,12 @@ def process_html(html_input, embedded=True, png_images=False, output_file=None):
         if embedded:
             replace_node = lxml.html.fromstring(svg)
         else:
-            image_file = write_image(f"fretty-{count}", svg, as_png=png_images, output_file=output_file)
+            extension = 'png' if png_images else 'svg'
+            image_file = write_image(f"fretty-{count}.{extension}", svg, as_png=png_images, target_path=os.path.dirname(output_file))
             replace_node = lxml.html.fromstring(f'<img src="{image_file}" />')
         node.getparent().replace(node, replace_node)
         count += 1
     return lxml.html.tostring(doc, encoding='unicode')
 
 
-def main(config):
-    with open(config.input_file) as f:
-        if config.processor == 'ft':
-            output = generate_svg(f.readlines())
-        elif config.processor == 'xml':
-            output = process_xml(f.read(), embedded=True, output_file=config.output_file)
-        elif config.processor == 'xhtml':
-            output = process_xml(
-                f.read(),
-                embedded=config.embed_svg,
-                output_file=config.output_file,
-                png_images=config.png
-            )
-        elif config.processor == 'html':
-            output = process_html(
-                f.read(),
-                embedded=config.embed_svg,
-                output_file=config.output_file,
-                png_images=config.png
-            )
-        else:
-            print(f"ERROR: unknown processor: {config.processor}")
-            sys.exit(1)
-        if config.output_file:
-            if config.verbose:
-                print(f"write file: {config.output_file}")
-            with open(config.output_file, 'w') as o:
-                o.write(output)
-        else:
-            print(output)
 
-
-if __name__ == '__main__':
-    import argparse
-    import sys
-
-    parser = argparse.ArgumentParser(
-                prog='fretty',
-                description='Fretty is a guitar fretboard generator'
-                )
-    parser.add_argument('input_file')
-    parser.add_argument('-o', '--output-file', help="output file name")
-    parser.add_argument('--png', action='store_true', help="use png images files instead of svg")
-    parser.add_argument('-e', '--embed-svg', action='store_true',
-                        help="embed svg into the output (only for xml and xhtml)")
-    parser.add_argument('-p', '--processor', default="ft", choices=('ft', 'html', 'xhtml', 'xml'),
-                        help="type of input processing")
-    parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('--version', action='version', version='%(prog)s 1.15')
-    args = parser.parse_args()
-
-    main(args)
