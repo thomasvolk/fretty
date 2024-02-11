@@ -29,3 +29,5 @@ clean:
 
 uninstall:
 	python3 -m pip uninstall fretty
+
+prune: clean uninstall
