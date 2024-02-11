@@ -6,7 +6,8 @@ from os.path import join, dirname, abspath
 
 
 SETUP_DIR = dirname(abspath(__file__))
-
+PROJECT_URL = 'https://github.com/thomasvolk/fretty'
+PROJECT_FILES_URL = 'https://raw.githubusercontent.com/thomasvolk/fretty'
 
 with open(join(SETUP_DIR, 'fretty', '__init__.py')) as f:
     VERSION = re.search("__version__\s=\s'(.*)'", f.read()).group(1)
@@ -20,6 +21,7 @@ def project_test_suite():
 
 with open('README.md') as f:
     long_description = f.read()
+    long_description = long_description.replace('<img src="example/', f'<img src="{PROJECT_FILES_URL}/master/example/')
 
 
 setup(
@@ -41,11 +43,10 @@ setup(
     entry_points = {
         'console_scripts': ['fretty=fretty:main'],
     },
-    test_suite="setup.project_test_suite",
     extras_require={
         "PNG": ["CairoSVG"],
     },
-    url='https://github.com/thomasvolk/fretty',
+    url=PROJECT_URL,
     license='Apache',
     platforms='any',
     python_requires='>=3.9.0'
