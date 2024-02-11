@@ -4,7 +4,7 @@ Fretty is a guitar fretboard generator.
 
 how to run fretty:
 
-    ./fretty.py example/C-major-scale-box1.ft -o C-major-scale-box1.svg
+    fretty example/C-major-scale-box1.ft -o C-major-scale-box1.svg
 
 This will produce the file C-major-scale-box1.svg
 
