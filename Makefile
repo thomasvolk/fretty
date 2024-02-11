@@ -2,12 +2,15 @@ all: test
 
 PYTHON=./venv/bin/python3
 FRETTY=./venv/bin/fretty
+TWINE=./venv/bin/twine
 
 
 venv:
 	python3 -m venv venv
 	$(PYTHON) -m pip install CairoSVG
-
+	$(PYTHON) -m pip install build
+	$(PYTHON) -m pip install twine
+	
 
 $(FRETTY): venv
 	$(PYTHON) -m pip install -e .
@@ -33,6 +36,15 @@ test: $(FRETTY)
 	$(FRETTY) example/C-major.ft -o out/C-major.svg
 	diff out/C-major.svg example/C-major.svg
 	$(FRETTY) -V example/C-major.ft -o out/C-major.png
+
+build: test
+	$(PYTHON) -m build --wheel
+
+upload: build
+	PYTHONIOENCODING=utf-8 $(TWINE) upload --repository pypi dist/*
+
+upload-test: build
+	PYTHONIOENCODING=utf-8 $(TWINE) upload --repository testpypi dist/*
 
 clean:
 	rm -rf out build dist *.egg-info venv

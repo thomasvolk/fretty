@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __version__ = '2.0'
 
 from .fretty import generate_svg, write_image

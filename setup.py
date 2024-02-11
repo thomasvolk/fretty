@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from setuptools import setup, find_packages
 import unittest
 import re
@@ -26,7 +28,7 @@ with open('README.md') as f:
 
 setup(
     name='fretty',
-    description='Fretty is a guitar fretboard generator.',
+    description='Fretty is a guitar fretboard generator',
     long_description=long_description,
     long_description_content_type="text/markdown",
     version=VERSION,
