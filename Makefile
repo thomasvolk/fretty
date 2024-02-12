@@ -20,6 +20,7 @@ test: $(FRETTY)
 	@echo "check help ..."
 	$(FRETTY) -v
 	$(FRETTY) -h
+	$(FRETTY) example/Dm7-chord.ft
 	@echo "start tests ..."
 	$(FRETTY) example/C-major-arpeggio.ft -o out/C-major-arpeggio.svg
 	diff out/C-major-arpeggio.svg example/C-major-arpeggio.svg

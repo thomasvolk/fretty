@@ -266,7 +266,7 @@ def generate_svg(lines, width=None, height=None, embedded=False):
 
 
 def write_image(name, svg, target_path=''):
-    if name.endswith('.png'):
+    if name.lower().endswith('.png'):
         import cairosvg
         cairosvg.svg2png(bytestring=bytes(svg, 'utf-8'), write_to=os.path.join(target_path, name))
         return name

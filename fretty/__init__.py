@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__version__ = '2.0'
+__version__ = '2.0.1'
 
 from .fretty import generate_svg, write_image
 
@@ -24,7 +24,7 @@ def main():
                 print(f"write file: {args.output_file}")
             write_image(args.output_file, svg_output)
         else:
-            print(output)
+            print(svg_output)
 
 
 if __name__ == '__main__':
