@@ -39,6 +39,7 @@ upload: build
 	PYTHONIOENCODING=utf-8 twine upload --repository pypi dist/*
 
 upload-test: build
+	pip install twine
 	PYTHONIOENCODING=utf-8 twine upload --repository testpypi dist/*
 
 clean:
